@@ -49,8 +49,26 @@
 
         //let's delegate the clicks to handle routing
         var self = this;
+        var subpanels = this.container.find(".insetPanel");
+        var hasDefault = false;
+        subpanels.forEach(function(insetPanel) {
+            var $insetPanel = $(insetPanel);
+            var isDefault = $insetPanel.hasClass("default");
+            if (isDefault) {
+                $insetPanel.css("display", "block");
+                hasDefault = true;
+            } else {
+                $insetPanel.css("display", "none");
+            }
+        });
+        if (!hasDefault) {
+            var firstSubpanel = $(subpanels[0]);
+            firstSubpanel.css("display", "block");
+            firstSubpanel.addClass("default");
+        }
         this.container.parent().find(".subpanelNav").on("click", "a", function (e) {
-            self.loadNewDiv($(this.hash).get(), $(this).data("transition"), false);
+            self.loadNewDiv($(this.hash), $(this).data("transition"), false);
+            $(this).addClass("pressed");
             e.preventDefault();
         });
         this.container.css("overflow", "hidden");
@@ -83,7 +101,7 @@
         });
     };
 
-    subpanel.prototype = {
+    Subpanel.prototype = {
         container: null,
         currentDiv: null,
         history: [],
@@ -91,10 +109,12 @@
             var div = this.container.find(".default");
             div.vendorCss("Transform", "none");
             div.show();
-            this.currentDiv = div.get();
+            this.currentDiv = div.get(0);
             if (scrollers[this.currentDiv.id]) scrollers[this.currentDiv.id].enable();
         },
         loadNewDiv: function (newDiv, trans, back, prevDiv) {
+            if (!newDiv) return;
+            var newDiv = newDiv.get(0);
             if (newDiv == this.currentDiv) return;
             back = back || false;
             var oldDiv = prevDiv || this.currentDiv;
