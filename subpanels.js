@@ -70,6 +70,7 @@
             self.loadNewDiv($(this.hash), $(this).data("transition"), false);
             $(this).addClass("pressed");
             e.preventDefault();
+            e.stopImmediatePropagation();
         });
         this.container.css("overflow", "hidden");
         this.container.parent().find(".subpanelNav a").data("ignore", "true"); //Set data ignore so the main click handler doesn't process it
